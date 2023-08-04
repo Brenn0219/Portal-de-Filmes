@@ -1,4 +1,14 @@
 
+:root {
+    --color-white: #FFFF;
+    --color-greyish-white: #dbd8d8;
+    --color-reddish-pink: #FF0040;
+    --color-light-reddish-pink: #df1e4e;
+    --color-light-reddish-pink-2: #fc0a47;
+    --color-dark-grey: #41464e;
+    --color-bluish-black: #151A23;
+}
+
 /* ---- CONFIG GERAL ---- */
 
 *{
@@ -8,7 +18,7 @@
 }
 
 body {
-    background-color: #151A23;
+    background-color: var(--color-bluish-black);
 }
 
 /* ---- HEADER ---- */
@@ -16,117 +26,68 @@ body {
 .header {
     display: flex;
     align-items: center;
-    justify-content: center;
-    border-bottom: solid 1px #41464e;
-    padding: 1rem 0;
+    border-bottom: solid 1px var(--color-dark-grey);
 }
 
 .logo {
     height: 60px;
 }
 
+.header-menu {
+    width: 100%;
+}
+
 .header-menu .navbar .navbar-nav .nav-item a {
-    color: white;
+    color: var(--color-white);
     transition: 0.2s;
 }
 
 .header-menu .navbar .navbar-nav .nav-item  a:hover {
-    color: #FF0040;
+    color: var(--color-reddish-pink);
 }
 
 .header-menu .d-flex button {
     border: none;
-    background-color: #df1e4e;
-    color: white;
+    background-color: var(--color-light-reddish-pink);
+    color: var(--color-white);
     transition: .3s;
 }
 
 .header-menu .d-flex button:hover {
-    background-color: #fc0a47;
-    color: white;
-}
-
-/* BOTÃO INPUNT */
-.pesquisa {
-    margin-left: 10px;
-    position: relative;
-}
-
-input[type=text] { 
-    outline: none;
-    width: 200px;
-    border: solid 2px #151A23;
-    border-radius: 8px;
-    margin: 8px 0;
-    padding: 5px 10px;
-    transition: .3s;
-    background-color: rgb(247, 247, 247);
-}
-
-input[type=text]:focus {
-    color: #151A23;
-    border: solid 2px #FF0040;
-}
-
-input[type=text]::placeholder {
-    color: #151A23;
-}
-
-.pesquisa input[type=text]{
-    padding-left: 35px;  
-}
-
-.pesquisa i {
-    position: absolute;
-    left: 0;
-    top: 7px;
-    padding: 9px 10px;
-    color: #151A23;
+    background-color: var(--color-light-reddish-pink-2);
+    color: var(--color-white);
 }
 
 /* ---- MAIN ---- */
 
 /* LANÇAMENTOS */
-.main-titulo h1 {
-    margin: 1.5rem 0 3rem;
+
+.title {
     text-align: center;
-    color: white;
-}
-
-.lancamentos:first-child {
-    padding-left: 0;
-}
-
-.lancamentos {
-    color: white;
-    padding-left: 1rem;
+    color: var(--color-white);
 }
 
 /* CAROUSEL TITULO */
 
-.carousel-inner {
+/* .carousel-inner {
     padding: 0 12%;
-}
+} */
 
 .carousel-item iframe {
-    max-width: 100%;
-}
-
-.carousel-item .row {
-    
+    min-width: 100%;
+    min-height: 100%;
 }
 
 .carousel-item .row h2 {
     height: 75.5px;
 }
 
-.main, .footer p {
-    color: rgb(219, 216, 216);
-    margin-bottom: 0;
+.main {
+    color: var(--color-greyish-white);
 }
 
 strong {
-    color: #df1e4e;
+    color: var(--color-light-reddish-pink);
 }
 
 .items-row {
@@ -161,16 +122,11 @@ strong {
     gap: 5px;
 }
 
-.destaque {
-    color: white;
-    margin: 3rem 0 2rem 0;
-    display: flex;
-    justify-content: space-between;
-}
+/* DESTAQUE */
 
-.imagens-destaque {
+.featured-images {
     cursor: pointer;
-    width: 90%;
+    width: 100%;
     height: 275px;
 }
 
@@ -181,15 +137,9 @@ strong {
 }  
 
 .botao-right {
-    box-sizing: border-box;
-    background-color: #FF0040;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    background-color: var(--color-reddish-pink);
     border-radius: 15px;
     padding: 10px 20px;
-    margin: 1.5rem 0;
-    float: right;
     max-width: 210px;
     transition: 0.3s;
     cursor: pointer;
@@ -266,8 +216,8 @@ strong {
 
 .entrevistas  {
     color: white;
-    border-top: solid 1px #41464e;
-    border-bottom: solid 1px #41464e;
+    border-top: solid 1px var(--color-dark-grey);
+    border-bottom: solid 1px var(--color-dark-grey);
 }
 
 
@@ -339,16 +289,14 @@ strong {
 }
 
 /* ---- FOOTER ---- */
-
-footer {
-    background-color: #41464e;
+.footer {
+    background-color: var(--color-dark-grey);
+    color: var(--color-greyish-white);
+    padding: 15px 0;
 }
 
-.footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem 0;
+.footer p {
+    margin-bottom: 0;
 }
 
 
