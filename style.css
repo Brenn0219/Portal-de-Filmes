@@ -1,4 +1,3 @@
-
 :root {
     --color-white: #FFFF;
     --color-greyish-white: #dbd8d8;
@@ -73,6 +72,10 @@ body {
     color: var(--color-greyish-white);
 }
 
+.subtitle {
+    color: #ffffff;
+}
+
 /* LANÇAMENTOS */
 
 .title {
@@ -138,19 +141,21 @@ strong {
 
 /* NOVIDADES */
 
-.novidades-color {
-    display: flex;
-    gap: 20px;
-    margin-top: 1rem;
-}
-
-.novidades-color p {
-    background-color: #df1e4e;
+.tag {
+    background-color: var(--color-light-reddish-pink);
     padding: 2px 5px;
     border-radius: 10px;
-    cursor: pointer;
 }
 
+.social-network-icons  {
+    font-size: 20px;
+    color: var(--color-white);
+}
+
+.social-network-icons:hover {
+    color: var(--color-light-reddish-pink);
+    transition: 0.3s;
+}
 
 /* ---- FOOTER ---- */
 .footer {
@@ -162,106 +167,3 @@ strong {
 .footer p {
     margin-bottom: 0;
 }
-
-
-@media screen and (min-width: 576px) and (max-width: 991px) {
-    .avaliacao-display {
-        display: block;
-    }
-}
-
-@media screen and (max-width: 992px) {
-    .imagens-center div {
-        margin: 1rem 0;
-    } 
-
-    .avaliacao-box {
-        margin: 1rem 0;
-    }
-
-    .entrevistas-titulo {
-        margin-bottom: 0;
-    }
-
-    .entrevistas-items:first-child {
-        margin-top: 0;
-    }
-
-    .entrevistas-items {
-        margin-top: 2rem;
-    }
-
-    .lancamentos h2 {
-        margin-top: 1rem;
-    }
-
-}
-
-@media screen and (min-width: 576px) and (max-width: 768px) {
-    .avaliacao {
-        display: flex;
-        gap: 9px;
-    }
-}
-
-@media screen and (max-width: 576px) {
-    .imagem-pro{
-        display: none;
-    }
-
-    .novidades-items:last-child {
-        margin-bottom: 1.5rem;
-    }
-
-    .editorial {
-        margin-top: 1rem;
-    }
-
-    .botao-width {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    } 
-
-    .footer {
-        padding: 1rem;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-
-    }
-
-    .footer p {
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-
-    h2 {
-        text-align: center;
-    }
-
-    .novidades h2 {
-        text-align: left;
-    }
-}
-
-@media screen and (max-width: 355px) {
-    .destaque  {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .destaque h2 {
-        margin-bottom: 1rem;
-    }
-}
-
-@media screen and (min-width: 992px) {
-    .lancamentos iframe {
-        height: 100%;
-    }
-}
-
-
