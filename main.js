@@ -5,10 +5,9 @@ function onLoad() {
 
 /**
  * Metodo para fazer a requisicao para API. Esse metodo recebe dois parametros 
- * @param {*} url e o endereco da requisicao que queremos
- * @param {*} results e uma arrow funciton que ira executar uma funcao com a resposta da requisicao  
+ * @param {*} url e o endereco da requisicao que queremos  
 */
-function request(url) {
+const request = async (url) => {
     const options = {
         method: 'GET',
         headers: {
@@ -17,68 +16,67 @@ function request(url) {
         }
     };
 
-    return fetch(url, options)
-    .then(response => response.json())
-    .then(response => {
-        return response;
-    })
-    .catch(err => console.error(err));  
+    let response = (await fetch(url, options)).json();
+    return response;
 }
 
 /**
  * Metodo para mostrar os filmes em destaque
  * @param {*} results sao os filmes em destaque 
 */
-const featuredMovies = () =>  {
-    let featuredMovies = document.getElementById("featured-movies");
-    let response = request("https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1");
+const featuredMovies = async () => {
+    let featuredMoviesContainer = document.getElementById("featured-movies");
+    let response = await request("https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1");
 
-    response.then(data => {
-        for(let i = 0; i < 4; i++) {;
-            let item = `
-                <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-                    <img src="https://image.tmdb.org/t/p/original${data.results[i].poster_path}" alt="${data.results[i].title}" class="featured-images">
-                </div>
-            `;
-    
-            featuredMovies.innerHTML += item;
-        }
-    }) 
+    for(let i = 0; i < 4; i++) {;
+        let movie = `
+            <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+                <img src="https://image.tmdb.org/t/p/original${response.results[i].poster_path}" alt="${response.results[i].title}" class="featured-images">
+            </div>
+        `;
+
+        featuredMoviesContainer.innerHTML += movie;
+    }
 }
 
-const filmsInReleases = () => { 
-    let releases = document.getElementById("carousel");
-    let response = request("https://api.themoviedb.org/3/movie/now_playing?language=pt-BR&page=1");
+const filmsInReleases = async () => {
+    let featuredMovieCarousel = document.getElementById("carousel");
+    let answerMovies = await request("https://api.themoviedb.org/3/movie/now_playing?language=pt-BR&page=1");
 
-    response.then(data => {
-        for(let i = 0; i < 3; i++) {
-            let item = document.createElement('article');
-            item.classList.add("carousel-item");
+    for(let i = 0; i < 3; i++) {
+        let movie = document.createElement('article');
+        let collaborators = await technicalDirection(answerMovies.results[i].id);
 
-            if(i == 0) {
-                item.classList.add("active");
-            }
+        movie.classList.add("carousel-movie");
+        // if(i == 0) {
+        //     movie.classList.add("active");
+        // }
 
-            item.innerHTML += `
+        movie.innerHTML += `
             <section class="row">
                 <div class="col-12 col-lg-6">
-                    <iframe id="video${i}" src="https://www.youtube.com/embed/aWzlQ2N6qqg" title="${data.results[i].original_title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    <iframe src="https://www.youtube.com/embed/aWzlQ2N6qqg" title="${answerMovies.results[i].original_title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
 
                 <div class="col-12 col-lg-6">
-                    <h2>${data.results[i].title}</h2>
+                    <h2>${answerMovies.results[i].title}</h2>
 
-                    <p class="text-justify my-1"><strong>Sinopse: </strong>${data.results[i].overview}</p>
+                    <p class="text-justify my-1"><strong>Sinopse: </strong>${answerMovies.results[i].overview}</p>
 
                     <div class="d-flex align-items-center justify-content-between my-1">
-                        <p id="director${i}"></p>
-                        <p id="screenplay${i}"></p>
-                        <p><strong>Estreia: </strong>${data.results[i].release_date}</p>
+                        <p>${collaborators.director}</p>
+                        <p>${collaborators.screenplay}</p>
+                        <p><strong>Estreia: </strong>${answerMovies.results[i].release_date}</p>
                     </div>
 
                     <p class="my-1"><strong>Elenco:</strong></p>
 
-                    <div id="cast${i}" class="d-flex align-items-center justify-content-between cast"></div>
+                    <div class="d-flex align-items-center justify-content-between cast">
+                        <p>${collaborators.cast[0]}</p>
+                        <p>${collaborators.cast[1]}</p>
+                        <p>${collaborators.cast[2]}</p>
+                        <p>${collaborators.cast[3]}</p>
+                    </div>
 
                     <div class="d-flex gap-2 mt-2">
                         <p><strong>Avaliação:</strong></p>
@@ -93,32 +91,35 @@ const filmsInReleases = () => {
                     </div>
                 </div>
             </section>
-            `
-            let responseCast = request(`https://api.themoviedb.org/3/movie/${data.results[i].id}/credits?language=pt-BR`);
-            responseCast.then(data => {
-                let director = document.getElementById(`director${i}`);
-                let screenplay = document.getElementById(`screenplay${i}`);
-                let cast = document.getElementById(`cast${i}`);
+        `
 
-                data.crew.forEach(member => {
-                    if (member.job === "Director" && director.innerHTML == "") {
-                        director.innerHTML += `<strong>Diretor: </strong> ${member.name}`;
-                    } else if (member.job === "Screenplay" && screenplay.innerHTML == "") {
-                        screenplay.innerHTML = `<strong>Roteiro: </strong> ${member.name}`;
-                    }
+        featuredMovieCarousel.appendChild(movie);
+    }
+}
 
-                    if (director.innerHTML !== "" && screenplay.innerHTML !== "") {
-                        return;
-                    }
-                })
+const technicalDirection = async (id) => {
+    let movieHighlights = await request(`https://api.themoviedb.org/3/movie/${id}/credits?language=pt-BR`);
 
-                for(let j = 0; j < 4; j++) {
-                    let p = `<p>${data.cast[j].name}</p>`;
-                    cast.innerHTML += p;
-                }
-            })
+    let collaborators = {
+        "director": "",
+        "screenplay": "",
+        "cast": []
+    }
 
-            releases.appendChild(item)
-        }
+    for(let i = 0; i < 4; i++) {
+        collaborators.cast.push(movieHighlights.cast[i].name);
+    }
+
+    movieHighlights.crew.forEach(member => {
+        if(collaborators.director === "" && member.job === "Director") {
+            collaborators.director = member.name;
+        } else if(collaborators.screenplay === "" && member.job === "Screenplay") {
+            collaborators.screenplay = member.name;
+        } 
+
+        if(collaborators.director !== "" && collaborators.screenplay !== "") 
+            return;
     })
+
+    return collaborators;
 }
