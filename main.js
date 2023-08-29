@@ -18,26 +18,31 @@ const request = async (url) => {
 
 // Metodo para mostrar os filmes em destaque
 const featuredMovies = async () =>  {
+    let uploadMoreMovies = document.getElementById("upload-more-movies");
     let featuredMovies = document.getElementById("featured-movies");
     let response = await request("https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1");
 
+    let n = parseInt(uploadMoreMovies.value);
     for(let i = 0; i < 4; i++) {;
         let item = `
             <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <img src="https://image.tmdb.org/t/p/original${response.results[i].poster_path}" alt="${response.results[i].title}" class="featured-images">
+                <img src="https://image.tmdb.org/t/p/original${response.results[n + i].poster_path}" alt="${response.results[n + i].title}" class="featured-images">
             </div>
         `;
 
         featuredMovies.innerHTML += item;
-    } 
+    }
+    
+    n += 4;
+    uploadMoreMovies.value = n;
 }
 
 const filmsInReleases = async () => { 
     let launchFilmContainer = document.getElementById("carousel");
+    let movieDetails = await request("https://api.themoviedb.org/3/movie/now_playing?language=pt-BR&page=1");
 
     for(let i = 0; i < 3; i++) {
         let item = document.createElement('article');
-        let movieDetails = await request("https://api.themoviedb.org/3/movie/now_playing?language=pt-BR&page=1");
         let movieTechnicalSheet = await datasheet(movieDetails.results[i].id);
 
         item.classList.add("carousel-item");
@@ -115,4 +120,11 @@ const datasheet = async (id) => {
     });
 
     return movieTechnicalSheet;
+}
+
+const loadDetailedMoviePage = async (id) => {
+    let movie = await request(`https://api.themoviedb.org/3/movie/${id}?language=pt-Br`);
+    let movieDetails = await request(`https://api.themoviedb.org/3/movie/${id}/credits?language=pt-BR`);
+
+    
 }
