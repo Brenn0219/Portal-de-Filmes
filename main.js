@@ -1,4 +1,4 @@
-function onLoad() {
+const onLoad = () => {
     featuredMovies();
     filmsInReleases();
 }
@@ -26,7 +26,9 @@ const featuredMovies = async () =>  {
     for(let i = 0; i < 4; i++) {;
         let item = `
             <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <img src="https://image.tmdb.org/t/p/original${response.results[n + i].poster_path}" alt="${response.results[n + i].title}" class="featured-images">
+                <a href="movie.html?id=${response.results[n + i].id}">
+                    <img src="https://image.tmdb.org/t/p/original${response.results[n + i].poster_path}" alt="${response.results[n + i].title}" class="featured-images">
+                </a>
             </div>
         `;
 
@@ -37,13 +39,15 @@ const featuredMovies = async () =>  {
     uploadMoreMovies.value = n;
 }
 
+// Metodo para mostrar os filmes em lancamentos
 const filmsInReleases = async () => { 
     let launchFilmContainer = document.getElementById("carousel");
     let movieDetails = await request("https://api.themoviedb.org/3/movie/now_playing?language=pt-BR&page=1");
 
     for(let i = 0; i < 3; i++) {
         let item = document.createElement('article');
-        let movieTechnicalSheet = await datasheet(movieDetails.results[i].id);
+        let cast = (await request(`https://api.themoviedb.org/3/movie/${movieDetails.results[i].id}/credits?language=pt-BR`)).cast;
+        let video = await movieTrailers(movieDetails.results[i].id);
 
         item.classList.add("carousel-item");
         if(i == 0) {
@@ -53,7 +57,7 @@ const filmsInReleases = async () => {
         item.innerHTML += `
         <section class="row">
             <div class="col-12 col-lg-6">
-                <iframe src="https://www.youtube.com/embed/aWzlQ2N6qqg" title="${movieDetails.results[i].original_title}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/watch?v=${video.key}" title="${video.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -62,18 +66,18 @@ const filmsInReleases = async () => {
                 <p class="text-justify my-1"><strong>Sinopse: </strong>${movieDetails.results[i].overview}</p>
 
                 <div class="d-flex align-items-center justify-content-between my-1">
-                    <p><strong>Diretor: </strong>${movieTechnicalSheet.director}</p>
-                    <p><strong>Roterista: </strong>${movieTechnicalSheet.screenplay}</p>
+                    <p><strong>Diretor: </strong>${await movieStaff(movieDetails.results[i].id, "Director")}</p>
+                    <p><strong>Roterista: </strong>${await movieStaff(movieDetails.results[i].id, "Screenplay")}</p>
                     <p><strong>Estreia: </strong>${movieDetails.results[i].release_date}</p>
                 </div>
 
                 <p class="my-1"><strong>Elenco:</strong></p>
 
                 <div class="d-flex align-items-center justify-content-between cast">
-                    <p>${movieTechnicalSheet.cast[0]}</p>
-                    <p>${movieTechnicalSheet.cast[1]}</p>
-                    <p>${movieTechnicalSheet.cast[2]}</p>
-                    <p>${movieTechnicalSheet.cast[3]}</p>
+                    <p>${cast[0].name}</p>
+                    <p>${cast[1].name}</p>
+                    <p>${cast[2].name}</p>
+                    <p>${cast[3].name}</p>
                 </div>
 
                 <div class="d-flex gap-2 mt-2">
@@ -95,36 +99,109 @@ const filmsInReleases = async () => {
     }
 }
 
-const datasheet = async (id) => {
-    let movie = await request(`https://api.themoviedb.org/3/movie/${id}/credits?language=pt-BR`);
-    let movieTechnicalSheet = {
-        "director": "",
-        "screenplay": "",
-        "cast": []
+// Metodo para retornar a chave do trailer de cada filme
+const movieTrailers = async (id) => {
+    let response = await request(`https://api.themoviedb.org/3/movie/${id}/videos?language=en-US`);
+    let trailer = {
+        "key": "",
+        "name": ""
     }
 
-    for(let i = 0; i < 4; i++) {
-        movieTechnicalSheet.cast.push(movie.cast[i].name);
-    }
-
-    movie.crew.forEach(member => {
-        if (member.job === "Director" && movieTechnicalSheet.director === "") {
-            movieTechnicalSheet.director = member.name;
-        } else if (member.job === "Screenplay" && movieTechnicalSheet.screenplay === "") {
-            movieTechnicalSheet.screenplay = member.name;
+    response.results.forEach(video => {
+        if(video.type === "Trailer") {
+            trailer.key = video.key; 
+            trailer.name = video.name; 
+            return
         }
+    })
 
-        if (movieTechnicalSheet.director !== "" && movieTechnicalSheet.screenplay !== "") {
-            return;
-        }
-    });
-
-    return movieTechnicalSheet;
+    return trailer;
 }
 
-const loadDetailedMoviePage = async (id) => {
-    let movie = await request(`https://api.themoviedb.org/3/movie/${id}?language=pt-Br`);
-    let movieDetails = await request(`https://api.themoviedb.org/3/movie/${id}/credits?language=pt-BR`);
+// Metodo para procurar algum funcionario do filme
+const movieStaff = async (id, job) => {
+    let credits = await request(`https://api.themoviedb.org/3/movie/${id}/credits?language=pt-BR`);
+    let name;
 
-    
+    credits.crew.forEach(member => {
+        if(member.job == job) {
+            name = member.name;
+            return ;
+        }
+    })
+
+    return name;
+}
+
+// Metodo para mostrar um filme mais detalhado
+const loadDetailedMoviePage = async () => {
+    let url = new URL(window.location.href);
+    let idMovie = url.searchParams.get("id"); 
+
+    let movie = await request(`https://api.themoviedb.org/3/movie/${idMovie}?language=pt-BR`);
+    let trailer = await movieTrailers(movie.id);
+
+    let detailedFilmContainer = document.getElementById("movie-detalhs");
+    detailedFilmContainer.innerHTML = `
+    <secntion class="row">
+        <aside class="col-4">
+            <img class="w-100 h-100 image" src="https://image.tmdb.org/t/p/original${movie.backdrop_path}" alt="${movie.title}">
+        </aside>
+
+        <article class="col-8">
+            <h1>${movie.title}</h1>
+
+            <div class="d-flex align-items-center">
+                <span class="space">${movie.runtime} min</span> 
+
+                <div id="genres"></div>
+            </div>
+
+            <div class="my-3">
+                <h2>Enredo</h2>
+                <p>${movie.overview}</p>
+            </div>
+
+            <div class="mb-3">
+                <h2>Data de Lançamento</h2>
+                <p>${movie.release_date}</p>
+            </div>
+
+            <div class="mb-3 d-flex align-items-center - justify-content-between">
+                <div>
+                    <h2>Diretor</h2>
+                    <p>${await movieStaff(idMovie, "Director")}</p>
+                </div>
+
+                <div>
+                    <h2>Roterista</h2>
+                    <p>${await movieStaff(idMovie, "Screenplay")}</p>
+                </div>
+
+                <div>
+                    <h2>Produtor</h2>
+                    <p>${await movieStaff(idMovie, "Producer")}</p>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <h2>Elenco</h2>
+                <div id="cast"></div>
+            </div>
+
+            <iframe width="100%" src="https://www.youtube.com/watch?v=${trailer.key}" title="${trailer.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </article>
+    </secntion>
+    `
+
+    let genres = document.getElementById("genres");
+    movie.genres.forEach(genre => {
+        genres.innerText += " " +  genre.name + ", ";
+    })
+
+    let credits = await request(`https://api.themoviedb.org/3/movie/${idMovie}/credits?language=pt-BR`);
+    let cast = document.getElementById("cast"); 
+    credits.cast.forEach(member => {
+        cast.innerText += " " + member.name + ",";
+    })
 }
