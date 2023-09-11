@@ -23,20 +23,22 @@ const featuredMovies = async () =>  {
     let response = await request("https://api.themoviedb.org/3/movie/popular?language=pt-BR&page=1");
 
     let n = parseInt(uploadMoreMovies.value);
-    for(let i = 0; i < 4; i++) {;
-        let item = `
-            <div class="col-12 col-sm-6 col-md-6 col-lg-3">
-                <a href="movie.html?id=${response.results[n + i].id}">
-                    <img src="https://image.tmdb.org/t/p/original${response.results[n + i].poster_path}" alt="${response.results[n + i].title}" class="featured-images">
-                </a>
-            </div>
-        `;
-
-        featuredMovies.innerHTML += item;
-    }
+    if(n < 16) {
+        for(let i = 0; i < 4; i++) {;
+            let item = `
+                <div class="col-12 col-sm-6 col-md-6 col-lg-3">
+                    <a href="movie.html?id=${response.results[n + i].id}">
+                        <img src="https://image.tmdb.org/t/p/original${response.results[n + i].poster_path}" alt="${response.results[n + i].title}" class="featured-images">
+                    </a>
+                </div>
+            `;
     
-    n += 4;
-    uploadMoreMovies.value = n;
+            featuredMovies.innerHTML += item;
+        }
+        
+        n += 4;
+        uploadMoreMovies.value = n;
+    } 
 }
 
 // Metodo para mostrar os filmes em lancamentos
@@ -57,7 +59,7 @@ const filmsInReleases = async () => {
         item.innerHTML += `
         <section class="row">
             <div class="col-12 col-lg-6">
-                <iframe src="https://www.youtube.com/watch?v=${video.key}" title="${video.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/${video.key}" title="${video.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -145,7 +147,7 @@ const loadDetailedMoviePage = async () => {
     detailedFilmContainer.innerHTML = `
     <secntion class="row">
         <aside class="col-4">
-            <img class="w-100 h-100 image" src="https://image.tmdb.org/t/p/original${movie.backdrop_path}" alt="${movie.title}">
+            <img class="w-100 image" src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
         </aside>
 
         <article class="col-8">
@@ -189,7 +191,7 @@ const loadDetailedMoviePage = async () => {
                 <div id="cast"></div>
             </div>
 
-            <iframe width="100%" src="https://www.youtube.com/watch?v=${trailer.key}" title="${trailer.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <iframe width="100%" src="https://www.youtube.com/embed/${trailer.key}" title="${trailer.name}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </article>
     </secntion>
     `
