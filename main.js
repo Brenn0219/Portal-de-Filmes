@@ -207,3 +207,32 @@ const loadDetailedMoviePage = async () => {
         cast.innerText += " " + member.name + ",";
     })
 }
+
+const addQuerySearch = () => {
+    let navSearch = document.getElementById("nav-search");
+    window.location.href = `search.html?query=${navSearch.value}`;
+}
+
+const search = async () => {
+    let url = new URL(window.location.href);
+    let query = url.searchParams.get("query");
+    let response = await request(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=pt-BR&page=1`);
+    let researchContainer = document.getElementById("search");
+
+    response.results.forEach(movie => {
+        researchContainer.innerHTML += `
+        <article class="row rounded my-4">
+            <div class="col-4">
+                <a href="movie.html?id=${movie.id}">
+                    <img class="w-100 image" src="https://image.tmdb.org/t/p/w500${movie.backdrop_path}" alt="${movie.title}">
+                </a>           
+            </div>
+
+            <div class="col-8">
+                <h2><a href="movie.html?id=${movie.id}">${movie.title}</a></h2>
+                <p>${movie.overview}</p>
+            </div>
+        </article>
+        `
+    })
+}
