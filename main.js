@@ -222,14 +222,14 @@ const search = async () => {
     response.results.forEach(movie => {
         researchContainer.innerHTML += `
         <article class="row rounded my-4">
-            <div class="col-4">
+            <div class="col-12 col-md-4">
                 <a href="movie.html?id=${movie.id}">
                     <img class="w-100 image" src="https://image.tmdb.org/t/p/w500${movie.backdrop_path}" alt="${movie.title}">
                 </a>           
             </div>
 
-            <div class="col-8">
-                <h2><a href="movie.html?id=${movie.id}">${movie.title}</a></h2>
+            <div class="col-12 col-md-8">
+                <h2 class="my-2 my-md-0"><a href="movie.html?id=${movie.id}">${movie.title}</a></h2>
                 <p>${movie.overview}</p>
             </div>
         </article>
