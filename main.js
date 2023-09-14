@@ -146,11 +146,11 @@ const loadDetailedMoviePage = async () => {
     let detailedFilmContainer = document.getElementById("movie-detalhs");
     detailedFilmContainer.innerHTML = `
     <secntion class="row">
-        <aside class="col-4">
+        <aside class="col-12 col-md-4">
             <img class="w-100 image" src="https://image.tmdb.org/t/p/w500${movie.poster_path}" alt="${movie.title}">
         </aside>
 
-        <article class="col-8">
+        <article class="col-12 col-md-8">
             <h1>${movie.title}</h1>
 
             <div class="d-flex align-items-center">
